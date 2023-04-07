@@ -16,7 +16,6 @@ data = pd.read_excel("./11989_Diamond Data.xlsx")
 xAxis = 0
 yAxis = 1
 
-
 # Initialize the inputs
 b0 = float(input("B0: "))
 b1 = float(input("B1: "))
@@ -60,21 +59,41 @@ def calculateError(b0, b1, alpha, data, type):
     return error
 
 
-
+# Change these values based on the table column names
+xLabelPlaceholder = "Caratage"
+yLabelPlaceholder = "Price"
 
 # Create a plot and scatter figure
 fig, axs = plt.subplots(figsize=(6,6))
-axs.set_xlabel = "Caratage"
-axs.set_ylabel = "Price"
+axs.set_xlabel = xLabelPlaceholder
+axs.set_ylabel = yLabelPlaceholder
 axs.grid()
 
 # Iterate between epoch while animating them
 predictedYList = []
-line, = axs.plot(data["Caratage"], [None] * data.shape[0])
-scatter = axs.scatter(data["Caratage"], data["Price"])
+line, = axs.plot(data[xLabelPlaceholder], [None] * data.shape[0])
+scatter = axs.scatter(data[xLabelPlaceholder], data[yLabelPlaceholder])
 
+
+# for i in range(2000):
+#     b0Error = calculateError(b0, b1, alpha, data, TYPE_INTERCEPT)
+#     b1Error = calculateError(b0, b1, alpha, data, TYPE_SLOPE)
+#     newB0 = b0 - alpha * b0Error
+#     newB1 = b1 - alpha * b1Error
+#
+#     b0 = newB0
+#     b1 = newB1
+#
+# predictedYList = []
+# for i in range(0, data.shape[0]):
+#     predictedYList.append(predictYValue(b0, b1, data.iloc[i, xAxis]))
+#
+# # Change the line data to show difference
+# line.set_data(data["Caratage"], predictedYList)
+
+k = 0
 def animate(frame):
-    global b0, b1, alpha
+    global b0, b1, alpha, k
     b0Error = calculateError(b0, b1, alpha, data, TYPE_INTERCEPT)
     b1Error = calculateError(b0, b1, alpha, data, TYPE_SLOPE)
     newB0 = b0 - alpha * b0Error
@@ -88,9 +107,12 @@ def animate(frame):
     for i in range(0, data.shape[0]):
         predictedYList.append(predictYValue(b0, b1, data.iloc[i, xAxis]))
 
-    line.set_data(data["Caratage"], predictedYList)
+    # Change the line data to show difference
+    line.set_data(data[xLabelPlaceholder], predictedYList)
 
-    print("MSE: = " + str((b0Error, b1Error)))
+    print("Cost: = " + str((b0Error, b1Error)))
+    k += 1
+    if (k % 5 == 0): print("Counter = " + str(k))
 
     return line,
 
